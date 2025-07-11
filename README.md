@@ -30,4 +30,6 @@ Future runs: After you've entered the paths once, they will be saved in adb_conf
   2.Auto connect and launch scrcpy
   
   3.Annoy Friend/Sibling
-  
+
+# scrcpy shortcuts 
+https://github.com/Genymobile/scrcpy/blob/master/doc/shortcuts.md
