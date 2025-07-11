@@ -1,2 +1,13 @@
 # Auto-ADB-Scrcpy-connet
 Auto-ADB-Scrcpy-connet: PowerShell scripts for automating ADB connection and Scrcpy launch for Android Devices TV/Phone/Tablet e.t.c !
+
+Auto ADB connect 
+How to use this updated script:
+
+Save the code: Copy the entire updated code and replace the content of your adb_auto_connect.ps1 file with it.
+
+Run the script: Execute the script in PowerShell as usual (.\adb_auto_connect.ps1).
+
+First run: The first time you run it (or if adb_config.txt is missing/empty), it will prompt you to enter the full paths for your ADB platform-tools and Scrcpy directories.
+
+Future runs: After you've entered the paths once, they will be saved in adb_config.txt, and the script will automatically read them from there on subsequent runs.
