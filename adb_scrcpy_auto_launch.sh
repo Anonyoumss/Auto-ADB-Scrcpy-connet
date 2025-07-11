@@ -11,17 +11,15 @@
 #   or until Scrcpy is successfully launched after authorization.
 # - Make sure you have consent from the device owner to attempt this connection.
 
-# Define the target IP address and port for your Android TV
-targetDevice="192.168.8.93:5555"
-
 # Define the path for the configuration file
 # Gets the directory where the script itself is located
 scriptDir="$(dirname "$(readlink -f "$0")")"
 configFilePath="${scriptDir}/adb_config.txt"
 
-# Variables to store ADB and Scrcpy paths
+# Variables to store ADB, Scrcpy, and Device IP
 adbPath=""
 scrcpyPath=""
+targetDevice=""
 
 # --- Function to read configuration from file ---
 # Reads key=value pairs into an associative array
@@ -54,7 +52,7 @@ write_config() {
     done
 }
 
-# --- Load or prompt for paths ---
+# --- Load or prompt for paths and device IP ---
 # Read config into a temporary associative array
 declare -A loaded_config
 while IFS='=' read -r key value; do
@@ -64,13 +62,12 @@ done < <(read_config "$configFilePath") # Use process substitution to feed funct
 # Assign loaded values, default to empty string if not found
 adbPath="${loaded_config["AdbPath"]}"
 scrcpyPath="${loaded_config["ScrcpyPath"]}"
+targetDevice="${loaded_config["TargetDevice"]}" # Load target device
 
 # Validate and prompt for ADB path
-# Check if 'adb' executable exists and is executable at the stored path
 if [[ ! -x "$adbPath/adb" ]]; then
     echo -e "\e[31mADB platform-tools path not found or 'adb' is not executable.\e[0m"
     read -p "Please enter the full path to your ADB platform-tools directory (e.g., /home/youruser/platform-tools): " adbPath
-    # Basic validation loop: keep asking until a valid executable is found
     while [[ ! -x "$adbPath/adb" ]]; do
         echo -e "\e[31mInvalid path. 'adb' not found or not executable at '$adbPath'.\e[0m"
         read -p "Please re-enter the correct path to your ADB platform-tools directory: " adbPath
@@ -78,21 +75,34 @@ if [[ ! -x "$adbPath/adb" ]]; then
 fi
 
 # Validate and prompt for Scrcpy path
-# Check if 'scrcpy' executable exists and is executable at the stored path
 if [[ ! -x "$scrcpyPath/scrcpy" ]]; then
     echo -e "\e[31mScrcpy executable path not found or 'scrcpy' is not executable.\e[0m"
     read -p "Please enter the full path to your Scrcpy directory (e.g., /home/youruser/scrcpy-folder): " scrcpyPath
-    # Basic validation loop: keep asking until a valid executable is found
     while [[ ! -x "$scrcpyPath/scrcpy" ]]; do
         echo -e "\e[31mInvalid path. 'scrcpy' not found or not executable at '$scrcpyPath'.\e[0m"
         read -p "Please re-enter the correct path to your Scrcpy directory: " scrcpyPath
     done
 fi
 
-# Save updated paths to config file
-declare -A current_config=( ["AdbPath"]="$adbPath" ["ScrcpyPath"]="$scrcpyPath" )
+# Validate and prompt for Target Device IP
+if [[ -z "$targetDevice" ]]; then # Check if targetDevice is empty
+    echo -e "\e[31mAndroid TV device IP address not found.\e[0m"
+    read -p "Please enter your Android TV's IP address and port (e.g., 192.168.8.93:5555): " targetDevice
+    while [[ -z "$targetDevice" ]]; do # Loop until a non-empty value is provided
+        echo -e "\e[31mInvalid input. Device IP cannot be empty.\e[0m"
+        read -p "Please re-enter your Android TV's IP address and port: " targetDevice
+    done
+fi
+
+
+# Save updated paths and device IP to config file
+declare -A current_config=(
+    ["AdbPath"]="$adbPath"
+    ["ScrcpyPath"]="$scrcpyPath"
+    ["TargetDevice"]="$targetDevice" # Save target device
+)
 write_config "$configFilePath" current_config # Pass the associative array by name
-echo -e "\e[32mPaths saved to '$configFilePath' for future use.\e[0m"
+echo -e "\e[32mConfiguration saved to '$configFilePath' for future use.\e[0m"
 
 # --- Start of Connection Loop ---
 while true; do
@@ -100,7 +110,6 @@ while true; do
 
     # Step 1: Kill the ADB server to ensure a clean start
     echo -e "\e[33mKilling ADB server...\e[0m"
-    # Redirect stdout and stderr to /dev/null to suppress output
     "$adbPath/adb" kill-server > /dev/null 2>&1
 
     # Add a small delay to ensure the server has time to stop
@@ -108,7 +117,6 @@ while true; do
 
     # Step 2: Attempt to connect to the device
     echo -e "\e[33mAttempting to connect to $targetDevice...\e[0m"
-    # Capture all output (stdout and stderr) from the connect command
     connectOutput=$("$adbPath/adb" connect "$targetDevice" 2>&1)
     echo "$connectOutput"
 
@@ -117,25 +125,19 @@ while true; do
 
     # Step 3: Check the actual device status using 'adb devices'
     echo -e "\e[33mChecking device authorization status...\e[0m"
-    # Capture all output from the devices command
     deviceList=$("$adbPath/adb" devices 2>&1)
     echo "$deviceList"
 
     # Check if the target device is listed as 'device' (fully authorized and connected)
-    # The `grep -q` command checks if the pattern exists silently
     if echo "$deviceList" | grep -q "$targetDevice[[:space:]]\+device"; then
         echo -e "\e[32mDevice is authorized and connected! Launching Scrcpy...\e[0m"
-        # Launch Scrcpy executable from its directory
-        "$scrcpyPath/scrcpy"
-        # Exit the loop since Scrcpy has been launched successfully
-        break
+        "$scrcpyPath/scrcpy" # Launch Scrcpy executable from its directory
+        break # Exit the loop since Scrcpy has been launched successfully
     elif echo "$deviceList" | grep -q "$targetDevice[[:space:]]\+unauthorized"; then
         echo -e "\e[33mDevice is unauthorized. Please accept the 'Allow USB debugging?' prompt on your TV screen. Retrying in 2 seconds...\e[0m"
-        # No break here, continue looping to allow the user time to authorize on the device
         sleep 2
     else
         echo -e "\e[31mDevice not found or connection failed for another reason. Retrying in 2 seconds...\e[0m"
-        # Add a delay before the next iteration if connection failed or device not found
         sleep 2
     fi
 done
