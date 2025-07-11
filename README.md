@@ -2,6 +2,9 @@
 Auto-ADB-Scrcpy-connet: PowerShell scripts for automating ADB connection and Scrcpy launch for Android Devices TV/Phone/Tablet e.t.c !
 
 Auto ADB connect 
+REQUIREMENTS
+Android Debug Bridge (adb): https://developer.android.com/tools/adb
+scrcpy: https://github.com/Genymobile/scrcpy
 How to use this updated script:
 
 Save the code: Copy the entire updated code and replace the content of your adb_auto_connect.ps1 file with it.
