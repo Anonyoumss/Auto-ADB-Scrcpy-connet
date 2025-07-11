@@ -7,8 +7,33 @@ Android Debug Bridge (adb): https://developer.android.com/tools/adb
 
 scrcpy: https://github.com/Genymobile/scrcpy
 
-# How to use this updated script:
+# How to use this  script:
+# LINUX
+Make it Executable:
 
+Open your terminal.
+
+Navigate to the directory where you saved the script using cd.
+
+Run the command to make it executable:
+
+Bash
+
+chmod +x adb_auto_connect.sh
+Run the script:
+
+In the terminal, execute the script:
+
+Bash
+
+./adb_auto_connect.sh
+Important Notes for Linux:
+
+ADB Installation: Ensure ADB is installed on your Ubuntu system. You can usually install it via your package manager: sudo apt install adb. If you install it this way, adb will likely be in your system's PATH, and you might be able to use just adb instead of $adbPath/adb in the script (but keeping $adbPath makes it more robust if ADB isn't in PATH).
+Scrcpy Installation: Install Scrcpy. On Ubuntu, you can typically install it with: sudo apt install scrcpy. Again, if installed this way, scrcpy will be in your PATH.
+
+
+# Windows
 Save the code: Copy the entire updated code and replace the content of your adb_auto_connect.ps1 file with it.
 
 Run the script: Execute the script in PowerShell as usual (.\adb_auto_connect.ps1).
