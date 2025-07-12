@@ -11,15 +11,21 @@
 #   or until Scrcpy is successfully launched after authorization.
 # - Make sure you have consent from the device owner to attempt this connection.
 
+# Define the target IP address and port for your Android TV
+targetDevice="" # This will be loaded from config or prompted
+
 # Define the path for the configuration file
 # Gets the directory where the script itself is located
 scriptDir="$(dirname "$(readlink -f "$0")")"
 configFilePath="${scriptDir}/adb_config.txt"
 
-# Variables to store ADB, Scrcpy, and Device IP
+# Variables to store ADB and Scrcpy paths
 adbPath=""
 scrcpyPath=""
-targetDevice=""
+
+# Default paths for common installations on Linux
+defaultAdbPath="/usr/bin"
+defaultScrcpyPath="/usr/local/bin" # Or sometimes /usr/bin
 
 # --- Function to read configuration from file ---
 # Reads key=value pairs into an associative array
@@ -62,26 +68,39 @@ done < <(read_config "$configFilePath") # Use process substitution to feed funct
 # Assign loaded values, default to empty string if not found
 adbPath="${loaded_config["AdbPath"]}"
 scrcpyPath="${loaded_config["ScrcpyPath"]}"
-targetDevice="${loaded_config["TargetDevice"]}" # Load target device
+targetDevice="${loaded_config["TargetDevice"]}"
 
-# Validate and prompt for ADB path
-if [[ ! -x "$adbPath/adb" ]]; then
-    echo -e "\e[31mADB platform-tools path not found or 'adb' is not executable.\e[0m"
-    read -p "Please enter the full path to your ADB platform-tools directory (e.g., /home/youruser/platform-tools): " adbPath
-    while [[ ! -x "$adbPath/adb" ]]; do
-        echo -e "\e[31mInvalid path. 'adb' not found or not executable at '$adbPath'.\e[0m"
-        read -p "Please re-enter the correct path to your ADB platform-tools directory: " adbPath
-    done
-fi
+# --- Prompt for default paths or manual input ---
+if [[ ! -x "$adbPath/adb" || ! -x "$scrcpyPath/scrcpy" ]]; then
+    echo -e "\e[34mConfiguration paths not found or executables are missing.\e[0m"
+    read -p "Do you want to use default paths? (ADB: $defaultAdbPath, Scrcpy: $defaultScrcpyPath) [y/N]: " useDefaults
+    useDefaults=${useDefaults:-n} # Default to 'n' if no input
 
-# Validate and prompt for Scrcpy path
-if [[ ! -x "$scrcpyPath/scrcpy" ]]; then
-    echo -e "\e[31mScrcpy executable path not found or 'scrcpy' is not executable.\e[0m"
-    read -p "Please enter the full path to your Scrcpy directory (e.g., /home/youruser/scrcpy-folder): " scrcpyPath
-    while [[ ! -x "$scrcpyPath/scrcpy" ]]; do
-        echo -e "\e[31mInvalid path. 'scrcpy' not found or not executable at '$scrcpyPath'.\e[0m"
-        read -p "Please re-enter the correct path to your Scrcpy directory: " scrcpyPath
-    done
+    if [[ "$useDefaults" =~ ^[Yy]$ ]]; then
+        adbPath="$defaultAdbPath"
+        scrcpyPath="$defaultScrcpyPath"
+        echo -e "\e[32mUsing default paths.\e[0m"
+    else
+        # Validate and prompt for ADB path
+        if [[ ! -x "$adbPath/adb" ]]; then
+            echo -e "\e[31mADB platform-tools path not found or 'adb' is not executable.\e[0m"
+            read -p "Please enter the full path to your ADB platform-tools directory (e.g., /home/youruser/platform-tools): " adbPath
+            while [[ ! -x "$adbPath/adb" ]]; do
+                echo -e "\e[31mInvalid path. 'adb' not found or not executable at '$adbPath'.\e[0m"
+                read -p "Please re-enter the correct path to your ADB platform-tools directory: " adbPath
+            done
+        fi
+
+        # Validate and prompt for Scrcpy path
+        if [[ ! -x "$scrcpyPath/scrcpy" ]]; then
+            echo -e "\e[31mScrcpy executable path not found or 'scrcpy' is not executable.\e[0m"
+            read -p "Please enter the full path to your Scrcpy directory (e.g., /home/youruser/scrcpy-folder): " scrcpyPath
+            while [[ ! -x "$scrcpyPath/scrcpy" ]]; do
+                echo -e "\e[31mInvalid path. 'scrcpy' not found or not executable at '$scrcpyPath'.\e[0m"
+                read -p "Please re-enter the correct path to your Scrcpy directory: " scrcpyPath
+            done
+        fi
+    fi
 fi
 
 # Validate and prompt for Target Device IP
@@ -94,14 +113,13 @@ if [[ -z "$targetDevice" ]]; then # Check if targetDevice is empty
     done
 fi
 
-
 # Save updated paths and device IP to config file
 declare -A current_config=(
     ["AdbPath"]="$adbPath"
     ["ScrcpyPath"]="$scrcpyPath"
-    ["TargetDevice"]="$targetDevice" # Save target device
+    ["TargetDevice"]="$targetDevice"
 )
-write_config "$configFilePath" current_config # Pass the associative array by name
+write_config "$configFilePath" current_config
 echo -e "\e[32mConfiguration saved to '$configFilePath' for future use.\e[0m"
 
 # --- Start of Connection Loop ---
