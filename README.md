@@ -9,7 +9,7 @@ PowerShell and Bash scripts to streamline connecting your Android devices (TVs, 
 Click your platform to jump to setup instructions:
 
 <p align="center">
-  <a href="#chromeos-setup"><img src="https://img.icons8.com/color/48/000000/chrome-os.png" alt="ChromeOS" title="ChromeOS" /></a>
+  <a href="#chromeos-setup"><img src="https://icons8.com/icon/JOT4OHXaiQRT/chrome" alt="ChromeOS" title="ChromeOS" /></a>
   <a href="#macos-setup"><img src="https://img.icons8.com/color/48/000000/mac-os.png" alt="macOS" title="macOS" /></a>
   <a href="#windows-setup"><img src="https://img.icons8.com/color/48/000000/windows-10.png" alt="Windows" title="Windows" /></a>
   <a href="#linux-setup"><img src="https://img.icons8.com/color/48/000000/linux.png" alt="Linux" title="Linux" /></a>
