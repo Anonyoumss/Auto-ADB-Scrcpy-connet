@@ -120,3 +120,4 @@ while true; do
 done
 
 echo -e "\e[32mScript finished.\e[0m"
+
