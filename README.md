@@ -141,6 +141,15 @@ Click your platform to jump to setup instructions:
 
 ---
 
+## Use cases
+
+1. **Auto-Connect your Android device**.
+2. **Annoy Friends/Family** (By blasting the conform message).
+3. **Parental Control** (Watch what your kids are watching and change it).
+4. **CCTV** (by mirrint the CCTV/Connecting a USB camera and using USB Camera App).
+
+---
+
 ## 🛠️ Features
 
 - Automates ADB device connection (USB or Wi-Fi)
