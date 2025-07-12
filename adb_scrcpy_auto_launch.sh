@@ -16,8 +16,9 @@
 scriptDir="$(dirname "$(readlink -f "$0")")"
 configFilePath="${scriptDir}/adb_config.txt"
 
-# Variable to store Device IP
+# Variables to store Device IP and audio preference
 targetDevice=""
+useAudio="" # New variable for audio preference
 
 # --- Function to read configuration from file ---
 # Reads key=value pairs into an associative array
@@ -47,18 +48,19 @@ write_config() {
     > "$path" # Clear the file before writing
     for key in "${!config_data[@]}"; do
         echo "$key=${config_data[$key]}" >> "$path"
-    done
+    done # Corrected: 'done' instead of '}'
 }
 
-# --- Load or prompt for device IP ---
+# --- Load or prompt for device IP and audio preference ---
 # Read config into a temporary associative array
 declare -A loaded_config
 while IFS='=' read -r key value; do
     loaded_config["$key"]="$value"
 done < <(read_config "$configFilePath") # Use process substitution to feed function output to while loop
 
-# Assign loaded value, default to empty string if not found
+# Assign loaded values, default to empty string if not found
 targetDevice="${loaded_config["TargetDevice"]}"
+useAudio="${loaded_config["UseAudio"]}" # Load audio preference
 
 # Validate and prompt for Target Device IP
 if [[ -z "$targetDevice" ]]; then # Check if targetDevice is empty
@@ -70,9 +72,24 @@ if [[ -z "$targetDevice" ]]; then # Check if targetDevice is empty
     done
 fi
 
-# Save updated device IP to config file
+# Prompt for audio preference if not set or if user wants to change
+if [[ -z "$useAudio" ]]; then
+    echo -e "\e[34mAudio preference not found in configuration.\e[0m"
+    read -p "Do you want audio with Scrcpy? (y/N): " audioChoice
+    audioChoice=${audioChoice:-n} # Default to 'n' if no input
+    if [[ "$audioChoice" =~ ^[Yy]$ ]]; then
+        useAudio="true"
+        echo -e "\e[32mAudio enabled for Scrcpy.\e[0m"
+    else
+        useAudio="false"
+        echo -e "\e[32mAudio disabled for Scrcpy.\e[0m"
+    fi
+fi
+
+# Save updated device IP and audio preference to config file
 declare -A current_config=(
     ["TargetDevice"]="$targetDevice"
+    ["UseAudio"]="$useAudio" # Save audio preference
 )
 write_config "$configFilePath" current_config
 echo -e "\e[32mConfiguration saved to '$configFilePath' for future use.\e[0m"
@@ -107,8 +124,16 @@ while true; do
     # Check if the target device is listed as 'device' (fully authorized and connected)
     if echo "$deviceList" | grep -q "$targetDevice[[:space:]]\+device"; then
         echo -e "\e[32mDevice is authorized and connected! Launching Scrcpy...\e[0m"
-        # Rely on 'scrcpy' being in PATH
-        scrcpy
+        
+        # Construct Scrcpy command based on audio preference
+        scrcpyCommand="scrcpy -s \"$targetDevice\""
+        if [[ "$useAudio" == "false" ]]; then
+            scrcpyCommand+=" --no-audio"
+        fi
+
+        # Launch Scrcpy executable, explicitly selecting the target TCP/IP device by its serial/identifier
+        # Use sudo -u "$SUDO_USER" to run scrcpy as the original user, preserving graphical environment variables
+        sudo -u "$SUDO_USER" env DISPLAY="$DISPLAY" XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" bash -c "$scrcpyCommand"
         break # Exit the loop since Scrcpy has been launched successfully
     elif echo "$deviceList" | grep -q "$targetDevice[[:space:]]\+unauthorized"; then
         echo -e "\e[33mDevice is unauthorized. Please accept the 'Allow USB debugging?' prompt on your TV screen. Retrying in 2 seconds...\e[0m"
@@ -120,4 +145,3 @@ while true; do
 done
 
 echo -e "\e[32mScript finished.\e[0m"
-
