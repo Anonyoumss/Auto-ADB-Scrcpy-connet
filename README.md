@@ -1,153 +1,18 @@
-# Auto-ADB-Scrcpy-connect
-
-This repository contains PowerShell and Bash scripts designed to streamline the process of connecting to your Android devices (TVs, Phones, Tablets, etc.) via ADB (Android Debug Bridge) and launching Scrcpy for screen mirroring/control.
-
----
-
-
-## 1️⃣ Windows Setup
-
-<details>
-<summary>Expand for Windows instructions</summary>
-
-### Step 1: Save the Scripts
-
-Copy the content of the PowerShell scripts:
-
-- `adb_auto_connect.ps1`
-- `adb_scrcpy_auto_launch.ps1`
-
-Save them in a convenient folder (e.g., `C:\Scripts`).
-
-### Step 2: Run PowerShell as Administrator (if needed)
-
-Open PowerShell and navigate to your scripts folder:
-
-```powershell
-cd C:\Scripts
-```
-
-### Step 3: Make Execution Policy Allow Scripts (if needed)
-
-```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-### Step 4: Run the Desired Script
-
-For auto-connect:
-
-```powershell
-.\adb_auto_connect.ps1
-```
-
-### Step 5: First-Run Prompts
-
-- On first run (or if `adb_config.txt` is missing), you will be prompted to use default paths for ADB and Scrcpy.
-- If you choose **Y (Yes)**, it will attempt to use default locations.
-- If you choose **N (No)**, you can specify custom locations.
-
-</details>
-
----
-
-## 2️⃣ Mac Setup
-
-<details>
-<summary>Expand for Mac instructions</summary>
-
-### Step 1: Save the Scripts
-
-Copy the content of the Bash scripts:
-
-- `adb_auto_connect.sh`
-- `adb_scrcpy_auto_launch.sh`
-
-Save them in a convenient folder (e.g., `~/Documents/scripts/`).
-
-### Step 2: Make the Scripts Executable
-
-```bash
-chmod +x adb_auto_connect.sh adb_scrcpy_auto_launch.sh
-```
-
-### Step 3: Run in Terminal
-
-Navigate to your scripts folder and run the desired script:
-
-```bash
-./adb_auto_connect.sh
-```
-
-### Step 4: First-Run Prompts
-
-- On first run (or if `adb_config.txt` is missing), you will be prompted for your Android device's IP address and port (e.g., `192.168.8.93:5555`).
-- This will be saved in `adb_config.txt` for future runs.
-
-</details>
-
----
-
-## 3️⃣ Linux Setup
-
-<details>
-<summary>Expand for Linux instructions</summary>
-
-### Step 1: Ensure ADB Permissions
-
-Make sure your user is part of the `plugdev` group for ADB permissions:
-
-```bash
-sudo usermod -aG plugdev $USER
-# Log out and back in for group changes to take effect
-```
-
-### Step 2: Save the Scripts
-
-Copy the content of the Bash scripts:
-
-- `adb_auto_connect.sh`
-- `adb_scrcpy_auto_launch.sh`
-
-Save them in a convenient folder (e.g., `~/scripts/`).
-
-### Step 3: Make the Scripts Executable
-
-```bash
-chmod +x adb_auto_connect.sh adb_scrcpy_auto_launch.sh
-```
-
-### Step 4: Run in Terminal
-
-Navigate to your scripts folder and run the desired script:
-
-```bash
-./adb_auto_connect.sh
-```
-
-### Step 5: First-Run Prompts
-
-- On first run (or if `adb_config.txt` is missing), you will be prompted for your Android device's IP address and port.
-- This will be saved in `adb_config.txt` for future runs.
-
-</details>
-
----
-
-## 4️⃣ Common Troubleshooting
-
-- **ADB Not Found:** Ensure ADB is installed and in your system PATH, or specify the path when prompted.
-- **Scrcpy Not Found:** Ensure Scrcpy is installed and in your system PATH, or specify the path when prompted.
-- **Permission Errors (Linux/Mac):** Make scripts executable (`chmod +x ...`) and check ADB user group membership.
-- **Device Not Connecting:** Confirm the device is on the same network and ADB debugging is enabled.
-
----
-
-## 🔗 Resources
-
-- [ADB Documentation](https://developer.android.com/studio/command-line/adb)
-- [Scrcpy GitHub](https://github.com/Genymobile/scrcpy)
-
----
-
-Made with ❤️ by [Anonyoums]. PRs and feedback welcome!
+Auto-ADB-Scrcpy-connectThis repository contains PowerShell and Bash scripts designed to streamline the process of connecting to your Android devices (TVs, Phones, Tablets, etc.) via ADB (Android Debug Bridge) and launching Scrcpy for screen mirroring/control.<p align="center"><a href="#windows-setup"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/windows8/windows8-original.svg" width="40" alt="Windows Icon" /></a><a href="#mac-setup"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/apple/apple-original.svg" width="40" alt="macOS Icon" /></a><a href="#linux-setup"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linux/linux-original.svg" width="40" alt="Linux Icon" /></a><a href="#chromeos-setup"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Chromium_OS_logo.svg" width="40" alt="ChromeOS Icon" /></a></p>Project OverviewThe core idea behind these scripts is to automate the initial ADB connection, which can sometimes be tricky due to authorization prompts or daemon issues. They also offer the convenience of automatically launching Scrcpy once a successful and authorized connection is established.RequirementsBefore using these scripts, ensure you have the following installed on your system:Android Debug Bridge (ADB):Official Google Documentation: https://developer.android.com/tools/adbInstallation Note: For Windows, you'll typically download the platform-tools ZIP. For Linux/macOS/ChromeOS, it's often available via package managers.scrcpy:GitHub Repository: https://github.com/Genymobile/scrcpyInstallation Note: For Windows, download the pre-built binaries. For Linux/macOS/ChromeOS, it can often be installed via package managers or compiled from source.How to Use These ScriptsThere are two main scripts provided for each operating system:adb_auto_connect: Focuses solely on establishing and confirming the ADB connection.adb_scrcpy_auto_launch: Establishes the ADB connection and then automatically launches Scrcpy.All scripts will create and use an adb_config.txt file in the same directory to save your device IP and (for Windows) ADB/Scrcpy paths for future use.<a id="windows-setup"></a>1️⃣ Windows Setup<details><summary>Expand for Windows instructions</summary>These instructions are for the PowerShell (.ps1) scripts.Initial Setup & First Run:Download & Extract:Download the ADB platform-tools for Windows and extract them to a convenient location (e.g., C:\platform-tools).Download the scrcpy Windows release and extract it to a convenient location (e.g., C:\scrcpy\scrcpy-win64-vX.Y.Z).Save the Scripts: Copy the content of the PowerShell scripts (adb_auto_connect.ps1 and adb_scrcpy_auto_launch.ps1) into separate .ps1 files and save them in the same folder on your computer (e.g., C:\MyScripts).Run in PowerShell:Open PowerShell.Navigate to the directory where you saved the scripts:cd C:\MyScripts
+Run the desired script (e.g., for auto-connect):.\adb_auto_connect.ps1
+First-Run Prompts:The first time you run either script (or if adb_config.txt is missing), it will ask you if you want to use default paths for ADB and Scrcpy.If you choose Y (Yes), it will attempt to use common default paths (e.g., C:\platform-tools and C:\scrcpy\scrcpy-win64-vX.Y.Z).If you choose N (No), it will then prompt you to manually enter the full paths to your ADB platform-tools directory and your Scrcpy directory.It will then ask for your Android TV's IP address and port (e.g., 192.168.8.93:5555).These paths and the IP will be saved in adb_config.txt for future use.Subsequent Runs:After the first successful setup, the script will automatically load the saved paths and IP address. You can simply run the script from PowerShell as described in step 3.</details><a id="mac-setup"></a>2️⃣ macOS Setup<details><summary>Expand for macOS instructions</summary>These instructions are for the Bash (.sh) scripts.Initial Setup & First Run:Install Homebrew (if you don't have it):Open Terminal (Applications > Utilities > Terminal).Install Homebrew by following the instructions on https://brew.sh/.Install ADB & Scrcpy via Homebrew:brew install android-platform-tools scrcpy
+Save the Scripts: Copy the content of the Bash scripts (adb_auto_connect.sh and adb_scrcpy_auto_launch.sh) into separate .sh files and save them in a convenient folder (e.g., ~/Documents/scripts/).Make Executable:Open your Terminal.Navigate to the directory where you saved the scripts:cd ~/Documents/scripts/
+Make the scripts executable:chmod +x adb_auto_connect.sh adb_scrcpy_auto_launch.sh
+Run in Terminal:Run the desired script (e.g., for auto-connect):./adb_auto_connect.sh
+First-Run Prompts:The first time you run either script (or if adb_config.txt is missing), it will ask for your Android TV's IP address and port (e.g., 192.168.8.93:5555).This IP will be saved in adb_config.txt for future use. (ADB and Scrcpy paths are not asked for as they are expected to be in your system's PATH after Homebrew installation).Subsequent Runs:After the first successful setup, the script will automatically load the saved IP address. You can simply run the script from your Terminal as described in step 4.</details><a id="linux-setup"></a>3️⃣ Linux Setup<details><summary>Expand for Linux instructions</summary>These instructions are for the Bash (.sh) scripts.Initial Setup & First Run:Install ADB & Scrcpy:On Debian/Ubuntu-based systems, you can typically install them via apt:sudo apt update
+sudo apt install adb scrcpy
+Ensure your user is part of the plugdev group for ADB permissions (log out and back in after adding):sudo usermod -aG plugdev $USER
+Save the Scripts: Copy the content of the Bash scripts (adb_auto_connect.sh and adb_scrcpy_auto_launch.sh) into separate .sh files and save them in a convenient folder (e.g., ~/scripts/).Make Executable:Open your terminal.Navigate to the directory where you saved the scripts:cd ~/scripts/
+Make the scripts executable:chmod +x adb_auto_connect.sh adb_scrcpy_auto_launch.sh
+Run in Terminal:Run the desired script (e.g., for auto-connect):./adb_auto_connect.sh
+First-Run Prompts:The first time you run either script (or if adb_config.txt is missing), it will ask for your Android TV's IP address and port (e.g., 192.168.8.93:5555).This IP will be saved in adb_config.txt for future use. (ADB and Scrcpy paths are not asked for as they are expected to be in your system's PATH).Subsequent Runs:After the first successful setup, the script will automatically load the saved IP address. You can simply run the script from your terminal as described in step 4.</details><a id="chromeos-setup"></a>4️⃣ ChromeOS Setup<details><summary>Expand for ChromeOS instructions</summary>These instructions are for the Bash (.sh) scripts, run within the Linux (Crostini) environment on your Chromebook.Initial Setup & First Run:Enable Linux (Crostini):Open ChromeOS Settings > "Developers" > "Linux development environment" and follow the prompts to set up.Install ADB and Scrcpy:Open your Linux terminal (from the ChromeOS app launcher).sudo apt update
+sudo apt install adb scrcpy
+Save the Scripts: Copy the Bash scripts (adb_auto_connect.sh, adb_scrcpy_auto_launch.sh) to your Linux files (e.g., ~/scripts/ or a subfolder in My files > Linux files).Make Scripts Executable:Navigate to the directory where you saved the scripts in your Linux terminal:cd ~/scripts/
+Make the scripts executable:chmod +x adb_auto_connect.sh adb_scrcpy_auto_launch.sh
+Run in Terminal:Run the desired script (e.g., for auto-connect):./adb_auto_connect.sh
+First-Run Prompts:The first time you run either script (or if adb_config.txt is missing), it will ask for your Android TV's IP address and port (e.g., 192.168.8.93:5555).This IP will be saved in adb_config.txt for future use. (ADB and Scrcpy paths are not asked for as they are expected to be in your system's PATH).Subsequent Runs:After the first successful setup, the script will automatically load the saved IP address. You can simply run the script from your Linux terminal as described in step 5.</details>Important Notes for All Operating SystemsDevice Consent: Always ensure you have consent from the Android device owner to attempt ADB connections.ADB Debugging: On your Android TV (or phone/tablet), you must enable Developer Options and then enable USB Debugging (or Network Debugging for wireless connections).Authorization Pop-up: The very first time you connect from your computer, a pop-up will appear on your Android device's screen asking to "Allow USB debugging?". You must accept this prompt and ideally check "Always allow from this computer" for future convenience. The scripts will keep retrying until this authorization is granted.Stopping the Script: These scripts are designed to loop indefinitely until a successful connection and (for the auto-launch script) Scrcpy launch occurs. You can manually stop a running script in your terminal or PowerShell window by pressing Ctrl + C.Multiple ADB Devices (Scrcpy): If you have multiple ADB devices connected (e.g., your TV and your Chromebook's built-in Android environment), Scrcpy might not know which one to mirror. The adb_scrcpy_auto_launch.sh script is designed to explicitly target your TV's IP. If you run into issues, you may need to manually disconnect other devices using adb disconnect <device_identifier> (e.g., adb disconnect emulator-5554) before running the script.Use CasesAuto Connect to Device: Quickly establish an ADB connection without manual commands.Auto Connect and Launch Scrcpy: Get your device mirrored to your desktop with a single command.Annoy Friend/Sibling: (Use responsibly and with consent!)Scrcpy ShortcutsOnce Scrcpy is running, you can use various keyboard shortcuts to control your Android device. Find the full list here:https://github.com/Genymobile/scrcpy/blob/master/doc/shortcuts.mdMade with ❤️ by [Anonyoums]. PRs and feedback welcome!
