@@ -4,14 +4,6 @@ This repository contains PowerShell and Bash scripts designed to streamline the 
 
 ---
 
-## Navigation
-
-- [1️⃣ Windows Setup](#1-windows-setup)
-- [2️⃣ Mac Setup](#2-mac-setup)
-- [3️⃣ Linux Setup](#3-linux-setup)
-- [4️⃣ Common Troubleshooting](#4-common-troubleshooting)
-
----
 
 ## 1️⃣ Windows Setup
 
