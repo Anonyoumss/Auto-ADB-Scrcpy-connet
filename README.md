@@ -4,13 +4,12 @@ This repository contains PowerShell and Bash scripts designed to streamline the 
 
 ---
 
-## 🚦 Quick Navigation
+## Navigation
 
 - [1️⃣ Windows Setup](#1-windows-setup)
 - [2️⃣ Mac Setup](#2-mac-setup)
 - [3️⃣ Linux Setup](#3-linux-setup)
 - [4️⃣ Common Troubleshooting](#4-common-troubleshooting)
-- [5️⃣ Placeholders / FAQ](#5-placeholders--faq)
 
 ---
 
@@ -152,14 +151,6 @@ Navigate to your scripts folder and run the desired script:
 
 ---
 
-## 5️⃣ Placeholders / FAQ
-
-- **[ ]** Placeholder for adding GIFs/screenshots.
-- **[ ]** Placeholder for adding advanced configuration options.
-- **[ ]** Placeholder for contributing guidelines and license info.
-
----
-
 ## 🔗 Resources
 
 - [ADB Documentation](https://developer.android.com/studio/command-line/adb)
@@ -167,4 +158,4 @@ Navigate to your scripts folder and run the desired script:
 
 ---
 
-Made with ❤️ by [YourName]. PRs and feedback welcome!
+Made with ❤️ by [Anonyoums]. PRs and feedback welcome!
